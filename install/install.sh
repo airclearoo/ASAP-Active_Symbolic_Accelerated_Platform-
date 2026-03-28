@@ -224,15 +224,40 @@ fi
 
 # 5. 安装工作流及深度学习 (MACE & Taskblaster)
 info "[5/5] 检查 MACE & Taskblaster..."
+
 if python -c "import mace" >/dev/null 2>&1 && python -c "import taskblaster" >/dev/null 2>&1; then
     success "MACE 与 Taskblaster 已就绪，跳过"
 else
+    echo ""
+    warn "检测到需要安装深度学习环境 (PyTorch/MACE)"
+    echo "请选择安装版本:"
+    echo "  1) CPU 版本 (体积小，适合个人电脑或无显卡服务器)"
+    echo "  2) GPU 版本 (支持 CUDA 11.8，适合深度学习服务器)"
+    echo "  3) 跳过 (手动安装)"
+    echo ""
+    read -p "请选择 [1-3]: " torch_choice
+
+    case $torch_choice in
+        1)
+            info "正在安装 PyTorch (CPU 版)..."
+            pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+            ;;
+        2)
+            info "正在安装 PyTorch (CUDA 11.8 版)..."
+            pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+            ;;
+        3)
+            info "跳过安装，请确保稍后手动配置 torch"
+            ;;
+        *)
+            error "无效选择，默认尝试标准安装"
+            pip install torch torchvision torchaudio
+            ;;
+    esac
+
     info "正在安装 MACE 及工作流工具..."
-    # 按照你的成功经验，此处直接安装
-    pip install torch torchvision torchaudio  # 建议显式带上 torch
     pip install mace-torch taskblaster
 fi
-
 echo ""
 success "依赖环境校验及安装全部完成！"
 
