@@ -224,40 +224,15 @@ fi
 
 # 5. 安装工作流及深度学习 (MACE & Taskblaster)
 info "[5/5] 检查 MACE & Taskblaster..."
-
 if python -c "import mace" >/dev/null 2>&1 && python -c "import taskblaster" >/dev/null 2>&1; then
     success "MACE 与 Taskblaster 已就绪，跳过"
 else
-    echo ""
-    warn "检测到需要安装深度学习环境 (PyTorch/MACE)"
-    echo "请选择安装版本:"
-    echo "  1) CPU 版本 (体积小，适合个人电脑或无显卡服务器)"
-    echo "  2) GPU 版本 (支持 CUDA 11.8，适合深度学习服务器)"
-    echo "  3) 跳过 (手动安装)"
-    echo ""
-    read -p "请选择 [1-3]: " torch_choice
-
-    case $torch_choice in
-        1)
-            info "正在安装 PyTorch (CPU 版)..."
-            pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-            ;;
-        2)
-            info "正在安装 PyTorch (CUDA 11.8 版)..."
-            pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-            ;;
-        3)
-            info "跳过安装，请确保稍后手动配置 torch"
-            ;;
-        *)
-            error "无效选择，默认尝试标准安装"
-            pip install torch torchvision torchaudio
-            ;;
-    esac
-
     info "正在安装 MACE 及工作流工具..."
+    # 按照你的成功经验，此处直接安装
+    pip install torch torchvision torchaudio  # 建议显式带上 torch
     pip install mace-torch taskblaster
 fi
+
 echo ""
 success "依赖环境校验及安装全部完成！"
 
@@ -340,38 +315,56 @@ fi
 echo ""
 
 #===============================================================================
-# 安装 ASAP 命令
+# 安装 ASAP 命令及自动路径配置
 #===============================================================================
 echo ""
-header "安装 ASAP 命令"
+header "配置系统环境变量"
 
-info "配置 ASAP 命令行工具..."
+info "正在配置自动路径识别..."
 
-# 获取 conda 基础路径
-CONDA_BASE=$(conda info --base)
-ASAP_BIN="$CONDA_BASE/envs/$ENV_NAME/bin/asap"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ASAP_SCRIPT="$SCRIPT_DIR/../scripts/bin/asap"
+# 1. 获取项目根目录的绝对路径
+# 假设安装脚本在 $PROJECT_ROOT/install/ 目录下
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ASAP_BIN_DIR="$PROJECT_ROOT/scripts/bin"
 
-# 复制 asap 脚本到 conda 环境
-if [ -f "$ASAP_SCRIPT" ]; then
-    cp "$ASAP_SCRIPT" "$ASAP_BIN"
-    chmod +x "$ASAP_BIN"
-    success "ASAP 命令已安装到：$ASAP_BIN"
-else
-    # 尝试从上级目录查找
-    ASAP_SCRIPT_ALT="../scripts/bin/asap"
-    if [ -f "$ASAP_SCRIPT_ALT" ]; then
-        cp "$ASAP_SCRIPT_ALT" "$ASAP_BIN"
-        chmod +x "$ASAP_BIN"
-        success "ASAP 命令已安装到：$ASAP_BIN"
-    else
-        warn "无法找到 asap 脚本，请手动配置"
-    fi
+# 2. 确定 Shell 配置文件
+CONF_FILE="$HOME/.bashrc"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    CONF_FILE="$HOME/.zshrc"
 fi
 
-echo ""
+# 3. 检查是否已经配置过，避免重复添加
+if grep -q "ASAP_PROJECT" "$CONF_FILE"; then
+    warn "检测到 $CONF_FILE 中已存在 ASAP 配置，正在更新路径..."
+    # 删除旧的配置行
+    sed -i '/ASAP_PROJECT/d' "$CONF_FILE"
+    sed -i '/asap-platform-start/,/asap-platform-end/d' "$CONF_FILE"
+fi
 
+# 4. 写入新配置
+cat << EOF >> "$CONF_FILE"
+
+# >>> asap-platform-start >>>
+export ASAP_PROJECT="$PROJECT_ROOT"
+export PATH="\$ASAP_PROJECT/scripts/bin:\$PATH"
+# 可选：取消注释下面这行可以实现打开终端自动激活环境
+# conda activate asap
+# <<< asap-platform-end <<<
+EOF
+
+success "环境变量已写入 $CONF_FILE"
+info "项目根目录已设为: $PROJECT_ROOT"
+
+# 5. 确保脚本具有执行权限
+if [ -f "$ASAP_BIN_DIR/asap" ]; then
+    chmod +x "$ASAP_BIN_DIR/asap"
+    success "已为 asap 脚本添加执行权限"
+else
+    error "未在 $ASAP_BIN_DIR 找到 asap 脚本，请确认目录结构"
+fi
+
+echo -e "${YELLOW}请运行 'source $CONF_FILE' 或重启终端以激活命令${NC}"
+echo ""
 #===============================================================================
 # 完成
 #===============================================================================
