@@ -344,10 +344,10 @@ A:
 
 ```bibtex
 @article{sisso-mace-workflow2025,
-  title={Materials-discovery workflow guided by symbolic regression for identifying acid-stable oxides for electrocatalysis},
-  journal={npj Computational Materials},
+  title={待定},
+  journal={待定},
   year={2025},
-  doi={10.1038/s41524-025-01596-4}
+  doi={待定}
 }
 ```
 
