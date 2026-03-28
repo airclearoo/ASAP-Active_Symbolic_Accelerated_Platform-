@@ -1,0 +1,87 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asap-workflow"
+version = "1.0.0"
+description = "ASAP - Active Symbolic Accelerated Platform: Materials discovery workflow with SISSO + MACE"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9, <3.12"
+authors = [
+    {name = "NewtonYe", email = "newtonye@example.com"}
+]
+keywords = [
+    "materials discovery",
+    "symbolic regression",
+    "SISSO",
+    "MACE",
+    "active learning",
+    "machine learning",
+    "computational materials science"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics"
+]
+dependencies = [
+    "sissopp>=1.2",
+    "mace-ml>=0.3",
+    "ase>=3.22",
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "scikit-learn>=1.3",
+    "matplotlib>=3.7"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "black>=23.0",
+    "flake8>=6.0",
+    "mypy>=1.0"
+]
+cuda = [
+    "mace-ml-cuda>=0.3"
+]
+
+[project.scripts]
+asap = "asap:main"
+
+[project.urls]
+Homepage = "https://github.com/NewtonYe/asap"
+Documentation = "https://github.com/NewtonYe/asap#readme"
+Repository = "https://github.com/NewtonYe/asap.git"
+Issues = "https://github.com/NewtonYe/asap/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["asap*"]
+
+[tool.setuptools.package-data]
+asap = ["config/INPUT", "config/INPUT.example"]
+
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311']
+include = '\.pyi?$'
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"

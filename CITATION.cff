@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "ASAP - Active Symbolic Accelerated Platform"
+abstract: "A materials discovery workflow platform combining SISSO symbolic regression and MACE machine learning force fields with active learning."
+authors:
+  - family-names: "Ye"
+    given-names: "Newton"
+    name-particles: "NewtonYe"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+version: 1.0.0
+doi: "10.5281/zenodo.xxxxxxx"  # 更新为实际的 Zenodo DOI
+date-released: 2026-03-28
+url: "https://github.com/NewtonYe/asap"
+keywords:
+  - "materials discovery"
+  - "symbolic regression"
+  - "SISSO"
+  - "MACE"
+  - "active learning"
+  - "machine learning"
+  - "computational materials science"
+license: MIT
+repository-code: "https://github.com/NewtonYe/asap"
+repository: "https://github.com/NewtonYe/asap"
+
+preferred-citation:
+  type: article
+  title: "Materials-discovery workflow guided by symbolic regression for identifying acid-stable oxides for electrocatalysis"
+  journal: "npj Computational Materials"
+  year: 2025
+  doi: "10.1038/s41524-025-01596-4"
+  url: "https://www.nature.com/articles/s41524-025-01596-4"

@@ -1,0 +1,21 @@
+{
+  "workflow": "SISSO + MACE Active Learning (Fixed)",
+  "timestamp": "2026-03-28T13:48:22.663446",
+  "initial_model": {
+    "r2_test": 0.7142954071807714,
+    "rmse_test": 0.6013680578587457
+  },
+  "final_model": {
+    "r2_test": 0.7617742959517716,
+    "rmse_test": 0.5491311182737444
+  },
+  "improvement": {
+    "r2_change": 0.04747888877100015,
+    "rmse_change": -0.05223693958500131
+  },
+  "active_learning": {
+    "n_iterations": 5,
+    "n_calculated": 15,
+    "train_size_increase": 15
+  }
+}
